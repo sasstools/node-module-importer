@@ -32,7 +32,12 @@ const resolveImportPath = (file, ext) => {
   return '';
 }
 
+const end = (done) => (value) => {
+  return done ? done(value) : value;
+}
+
 module.exports = function(url, prev, done) {
+  done = end(done);
   if (!url) return done(null);
 
   const urlParts = url.split('/');

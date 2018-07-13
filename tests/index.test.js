@@ -14,27 +14,40 @@ const compile = function(data) {
   });
 }
 
+const compileSync = function(data) {
+  return new Promise((yeah, nah) => {
+    try {
+      const results = sass.renderSync({ data, importer: importer });
+      yeah(results.css.toString());
+    } catch (err) {
+      nah(err);
+    }
+  });
+}
+
 describe('node-module-importer', () => {
-  describe('async', () => {
-    it('should resolve Sass @import from npm packages', () => (
-      compile('@import "foundation/scss/foundation.scss"')
-        .then(result => expect(result === foundation).toBeTruthy())
-    ));
-    it('should resolve Sass @import without extension from npm packages', () => (
-      compile('@import "foundation/scss/foundation.scss"')
-        .then(result => expect(result === foundation).toBeTruthy())
-    ));
-    it('should resolve Sass @import for partials from npm packages', () => (
-      compile('@import "foundation/scss/foundation/_variables.scss"')
-    ));
-    it('should resolve Sass @import for partials without extension from npm packages', () => (
-      compile('@import "foundation/scss/foundation/_variables"')
-    ));
-    it('should resolve Sass @import for partials without underscore from npm packages', () => (
-      compile('@import "foundation/scss/foundation/variables.scss"')
-    ));
-    it('should resolve Sass @import for partials without underscore and extension from npm packages', () => (
-      compile('@import "foundation/scss/foundation/variables"')
-    ));
+  [[ 'async', compile ], [ 'sync', compileSync ]].forEach(([ label, func ]) => {
+    describe(label, () => {
+      it('should resolve Sass @import from npm packages', () => (
+        func('@import "foundation/scss/foundation.scss"')
+          .then(result => expect(result === foundation).toBeTruthy())
+      ));
+      it('should resolve Sass @import without extension from npm packages', () => (
+        func('@import "foundation/scss/foundation.scss"')
+          .then(result => expect(result === foundation).toBeTruthy())
+      ));
+      it('should resolve Sass @import for partials from npm packages', () => (
+        func('@import "foundation/scss/foundation/_variables.scss"')
+      ));
+      it('should resolve Sass @import for partials without extension from npm packages', () => (
+        func('@import "foundation/scss/foundation/_variables"')
+      ));
+      it('should resolve Sass @import for partials without underscore from npm packages', () => (
+        func('@import "foundation/scss/foundation/variables.scss"')
+      ));
+      it('should resolve Sass @import for partials without underscore and extension from npm packages', () => (
+        func('@import "foundation/scss/foundation/variables"')
+      ));
+    });
   });
 });
