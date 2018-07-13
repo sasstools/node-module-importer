@@ -44,7 +44,9 @@ module.exports = function(url, prev, done) {
         if (exists(relative)) return done({ file: relative });
       } else {
         if (exists(relative)) return done({ file: relative });
-        var partial = relative.split(path.sep).splice(-1, 1, '_' + basename).join(path.sep);
+        var partial = relative.split(path.sep);
+        partial.splice(-1, 1, '_' + basename + ext);
+        partial = partial.join(path.sep);
         if (exists(partial)) return done({ file: partial });
       }
     } else {
