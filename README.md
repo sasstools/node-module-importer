@@ -41,7 +41,7 @@ sass.render({
 ### Node Sass CLI
 
 ```sh
-$ node-sass index.scss --importer node_modules/node-module-importer/index.js
+$ node-sass index.scss --importer node_modules/@node-sass/node-module-importer/index.js
 ```
 
 ## FAQ
