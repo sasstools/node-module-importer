@@ -38,8 +38,6 @@ module.exports = function(url, prev, done) {
     var ext = path.extname(relative);
     var basename = path.basename(relative, ext);
 
-    console.log({ resolved, relative, basename, ext })
-
     if (ext) {
       if (basename[0] === '_') {
         if (exists(relative)) return done({ file: relative });
