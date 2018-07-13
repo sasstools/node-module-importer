@@ -7,6 +7,7 @@
 ## Support
 
 - Node >= 6
+- node-sass >= 4.9.0
 
 ## Install
 
