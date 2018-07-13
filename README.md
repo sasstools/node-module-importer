@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sasstools/node-module-importer.svg?branch=master)](https://travis-ci.org/sasstools/node-module-importer)
+
 # node-module-importer
 
 >Node Sass importer for npm packages
