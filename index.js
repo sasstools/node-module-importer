@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var exts = ['.sass', '.scss'];
 
-function exists(file) {
+const exists = (file) => {
   try {
     fs.accessSync(file, fs.constants.F_OK);
     return true;
@@ -11,12 +11,33 @@ function exists(file) {
   }
 }
 
+const addPartialUnderscore = (file, ext) => {
+  const basename = path.basename(file, ext);
+  const partial = file.split(path.sep);
+  partial.splice(-1, 1, '_' + basename + ext);
+  return partial.join(path.sep);
+}
+
+const resolveImportPath = (file, ext) => {
+  const basename = path.basename(file);
+  const fullFile = file;
+  const isPartial = basename[0] === '_';
+
+  if (exists(file)) {
+    return file;
+  } else if (!isPartial) {
+    const partial = addPartialUnderscore(file, ext);
+    if (exists(partial)) return partial;
+  }
+  return '';
+}
+
 module.exports = function(url, prev, done) {
   if (!url) return done(null);
 
-  var urlParts = url.split('/');
-  var packageName = urlParts[0];
-  var cwd = process.cwd();
+  const urlParts = url.split('/');
+  const packageName = urlParts[0];
+  const cwd = process.cwd();
 
   try {
     var packagePath = require.resolve(packageName, { paths: [cwd] });
@@ -24,44 +45,27 @@ module.exports = function(url, prev, done) {
     return done(null);
   }
 
-  if (!packagePath) return done(null);
+  const parts = packagePath.split(path.sep);
 
-  var parts = packagePath.split(path.sep);
-
-  for (var i = parts.length; i >= 0; i--) {
+  for (let i = parts.length; i >= 0; i--) {
     if (parts[i] !== packageName || parts[i - 1] === packageName) continue;
 
-    var before = parts.splice(0, i + 1);
-    var after = urlParts.splice(1);
-
-    var resolved = [].concat(before, after).join(path.sep);
-    var relative = path.relative(cwd, resolved);
-    var ext = path.extname(relative);
-    var basename = path.basename(relative, ext);
+    const before = parts.splice(0, i + 1);
+    const after = urlParts.splice(1);
+    const resolved = [...before, ...after].join(path.sep);
+    const relative = path.relative(cwd, resolved);
+    const ext = path.extname(relative);
 
     if (ext) {
-      if (basename[0] === '_') {
-        if (exists(relative)) return done({ file: relative });
-      } else {
-        if (exists(relative)) return done({ file: relative });
-        var partial = relative.split(path.sep);
-        partial.splice(-1, 1, '_' + basename + ext);
-        partial = partial.join(path.sep);
-        if (exists(partial)) return done({ file: partial });
-      }
+      const importPath = resolveImportPath(relative, ext);
+      if (importPath) return done({ file: importPath });
     } else {
-      for (var j = 0; j < exts.length; j++) {
-        if (basename[0] === '_') {
-          if (exists(relative + exts[j])) return done({ file: relative + exts[j] });
-        } else {
-          if (exists(relative + exts[j])) return done({ file: relative + exts[j] });
-          var partial = relative.split(path.sep);
-          partial.splice(-1, 1, '_' + basename);
-          partial = partial.join(path.sep);
-          if (exists(partial + exts[j])) return done({ file: partial + exts[j] });
-        }
+      for (let j = 0; j < exts.length; j++) {
+        const importPath = resolveImportPath(relative + exts[j], exts[j]);
+        if (importPath) return done({ file: importPath });
       }
     }
+    break;
   }
 
   return done(null);
