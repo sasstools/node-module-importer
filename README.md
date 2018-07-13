@@ -4,6 +4,14 @@
 
 >Node Sass importer for npm packages
 
+## Disclaimer
+
+This is ALPHA software.
+
+It's messy. It's probably slow. It's probably buggy.
+
+Give it a shot. File bugs. Be patient.
+
 ## Support
 
 - Node >= 6
