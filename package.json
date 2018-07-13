@@ -7,6 +7,9 @@
   "scripts": {
     "test": "jest"
   },
+  "engines": {
+    "node" : ">=6"
+  },
   "author": "xzyfer",
   "license": "ISC",
   "peerDependencies": {

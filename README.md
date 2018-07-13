@@ -4,6 +4,10 @@
 
 >Node Sass importer for npm packages
 
+## Support
+
+- Node >= 6
+
 ## Install
 
 This package has a peer dependency on Node Sass for ensure import API compatibility.
