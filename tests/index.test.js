@@ -5,6 +5,8 @@ const foundation = sass.renderSync({
   file: 'node_modules/foundation/scss/foundation.scss',
 }).css.toString();
 
+const normalize = '@import url(node_modules/normalize.css/normalize.css);\n';
+
 const compile = function(data) {
   return new Promise((yeah, nah) => {
     return sass.render(
@@ -47,6 +49,10 @@ describe('node-module-importer', () => {
       ));
       it('should resolve Sass @import for partials without underscore and extension from npm packages', () => (
         func('@import "foundation/scss/foundation/variables"')
+      ));
+      it('should resolve Sass @import for npm packages that look like Sass files', () => (
+        func('@import "normalize.css/normalize.css"')
+          .then(result => expect(result === normalize).toBeTruthy())
       ));
     });
   });
