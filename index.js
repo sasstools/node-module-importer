@@ -16,9 +16,10 @@ module.exports = function(url, prev, done) {
 
   var urlParts = url.split('/');
   var packageName = urlParts[0];
+  var cwd = process.cwd();
 
   try {
-    var packagePath = require.resolve(packageName, { paths: [process.cwd()] });
+    var packagePath = require.resolve(packageName, { paths: [cwd] });
   } catch (e) {
     return done(null);
   }
@@ -34,7 +35,7 @@ module.exports = function(url, prev, done) {
     var after = urlParts.splice(1);
 
     var resolved = [].concat(before, after).join(path.sep);
-    var relative = path.relative(process.cwd(), resolved);
+    var relative = path.relative(cwd, resolved);
     var ext = path.extname(relative);
     var basename = path.basename(relative, ext);
 
