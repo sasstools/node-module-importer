@@ -1,3 +1,4 @@
+const path = require('path');
 const sass = require('node-sass');
 const importer = require('../');
 
@@ -5,7 +6,7 @@ const foundation = sass.renderSync({
   file: 'node_modules/foundation/scss/foundation.scss',
 }).css.toString();
 
-const normalize = '@import url(node_modules/normalize.css/normalize.css);\n';
+const normalize = `@import url(node_modules${path.sep}normalize.css${path.sep}normalize.css);\n`;
 
 const compile = function(data) {
   return new Promise((yeah, nah) => {
