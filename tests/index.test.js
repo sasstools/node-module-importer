@@ -52,7 +52,7 @@ describe('node-module-importer', () => {
       ));
       it('should resolve Sass @import for npm packages that look like Sass files', () => (
         func('@import "normalize.css/normalize.css"')
-          .then(result => expect(result === normalize).toBeTruthy())
+          .then(result => expect(result).toBe(normalize))
       ));
     });
   });
